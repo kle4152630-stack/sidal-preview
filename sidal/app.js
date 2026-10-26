@@ -309,7 +309,7 @@ function renderResult() {
   $('fact').textContent = selected.fact;
   $('uncertain').textContent = selected.uncertain;
   $('action').textContent = actionText();
-  $('templateText').textContent = selected.template;
+  $('templateText').textContent = selected.template.replace(/\s*내 상황과 말투에 맞게 바꿔 사용하세요\./g, '');
   $('templateLabel').textContent = selected.template.includes('\n') ? '나를 위한 작은 점검표' : '내 말투로 바꿔 쓸 수 있는 문장';
   $('reflection').textContent = reflectionLine(selected);
   const note = $('note').value.trim();
