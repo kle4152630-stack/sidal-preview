@@ -109,3 +109,7 @@ html.a11y-contrast{--bg:#000;--panel:#000;--text:#fff;--muted:#f0f0f0;--lav:#ffe
 .waitlist { max-width: 560px; margin: 28px auto; padding: 18px; text-align: center; border: 1px solid #ffffff1a; border-radius: 16px; }
 .waitlist-lead { margin-bottom: 12px; }
 .waitlist-button { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; padding: 0 20px; text-decoration: none; }
+
+/* 카드를 고르면 그 카드만 한 장씩 위로 올라온다. 고른 카드는 계속 떠 있다. */
+.pick-card.picked{transform:translateY(-26px) rotate(0deg) scale(1.06);border-color:#e6cc9c;box-shadow:0 0 20px #d5ba8680,0 10px 22px #0006;transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s,border-color .5s;z-index:3}
+.pick-card.picked:disabled{cursor:default}
