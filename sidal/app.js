@@ -16,7 +16,7 @@ function show(name) {
     else history.pushState(state, '');
   }
   currentScreen = name;
-  ['home', 'fortune', 'prepare', 'ritual', 'result'].forEach(id => $(id).hidden = id !== name);
+  ['home', 'intro', 'fortune', 'prepare', 'ritual', 'result'].forEach(id => $(id).hidden = id !== name);
   window.scrollTo({top: 0, behavior: 'instant'});
   const heading = $(name).querySelector('h1');
   if (heading && name !== 'home') heading.focus({preventScroll: true});
@@ -34,7 +34,7 @@ function clearTimers() {
 }
 function goBrowse() {
   clearTimers();
-  show('home');
+  show('intro');
   $('browse').scrollIntoView({behavior: reducedMotion ? 'instant' : 'smooth'});
 }
 function fillKeys(host, keywords) {
@@ -111,12 +111,12 @@ window.addEventListener('popstate', event => {
   const state = event.state;
   restoringHistory = true;
   try {
-    if (!state || state.sidal !== historySession || !['home', 'prepare', 'ritual', 'result'].includes(state.screen) || (state.screen !== 'home' && !allItems[state.item])) {
+    if (!state || state.sidal !== historySession || !['home', 'intro', 'prepare', 'ritual', 'result'].includes(state.screen) || (state.screen !== 'home' && !allItems[state.item])) {
       history.replaceState({sidal: historySession, screen: 'home', item: -1}, '');
       show('home');
       return;
     }
-    if (state.screen === 'home') { show('home'); return; }
+    if (state.screen === 'home' || state.screen === 'intro') { show(state.screen); return; }
     setSelection(allItems[state.item]);
     if (state.screen === 'ritual') startRitual();
     else if (state.screen === 'result') renderResult();
@@ -126,7 +126,7 @@ window.addEventListener('popstate', event => {
 
 $('begin').onclick = startRitual;
 const SPREAD_SIZE = 18;
-let drawPool = [], spreadButtons = [];
+let drawPool = [], spreadButtons = [], picks = [], extraCards = new Map();
 function randomIndex(n) {
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
     const value = new Uint32Array(1);
@@ -148,7 +148,9 @@ function startRitual() {
   clearTimers();
   const token = phase;
   currentCard = null;
+  picks = [];
   drawn.delete(selected);
+  extraCards.delete(selected);
   drawPool = shuffleDeck().slice(0, SPREAD_SIZE);
   $('spread').hidden = true;
   $('spread').classList.remove('choosing');
@@ -180,30 +182,21 @@ function showSpread() {
   $('cardStage').hidden = true;
   host.hidden = false;
   $('reshuffle').hidden = false;
-  $('ritualHint').textContent = '끌리는 카드를 한 장 고르세요. 어느 카드를 골라도 괜찮아요.';
+  $('ritualHint').textContent = '끌리는 카드를 세 장 고르세요. 0 / 3';
 }
 function pickCard(index) {
-  if (currentCard || !drawPool[index]) return;
+  const card = drawPool[index];
+  if (!card || picks.includes(card)) return;
+  picks.push(card);
+  if (spreadButtons[index]) { spreadButtons[index].classList.add('picked'); spreadButtons[index].disabled = true; }
+  if (picks.length < 3) { $('ritualHint').textContent = picks.length + ' / 3 · 카드를 ' + (3 - picks.length) + '장 더 고르세요.'; return; }
   clearTimers();
   const token = phase;
-  currentCard = drawPool[index];
+  currentCard = picks[0];
+  extraCards.set(selected, picks.slice(1));
   drawn.set(selected, currentCard);
-  $('revealImage').src = currentCard.image;
-  $('revealImage').alt = currentCard.name + ' 전통 타로 카드';
-  $('revealName').textContent = currentCard.name;
-  $('revealKeys').textContent = currentCard.keywords.join(' · ');
-  $('reshuffle').hidden = true;
-  $('spread').classList.add('choosing');
-  if (spreadButtons[index]) spreadButtons[index].classList.add('picked');
-  $('ritualHint').textContent = '고른 카드를 펼쳐볼게요.';
-  timers.push(setTimeout(() => {
-    if (token !== phase) return;
-    $('spread').hidden = true;
-    $('spread').classList.remove('choosing');
-    $('cardStage').hidden = false;
-    $('cardStage').className = 'card-stage ready';
-    timers.push(setTimeout(() => { if (token === phase) flipChosen(); }, reducedMotion ? 0 : 450));
-  }, reducedMotion ? 0 : 380));
+  $('ritualHint').textContent = '세 장을 펼쳐볼게요.';
+  timers.push(setTimeout(() => { if (token === phase) renderResult(); }, reducedMotion ? 0 : 700));
 }
 function flipChosen() {
   const token = phase;
@@ -226,6 +219,22 @@ function actionText() {
   if (selected.id === '1-9') return '이미 여러 번 연락했거나 연락을 거절당했다면 추가 메시지는 멈춰요. 그렇지 않다면 부담 없는 안부를 한 번 전하고, 그다음에는 답을 기다려보세요.';
   return selected.action;
 }
+// 결과 글을 뽑은 카드에서 조립한다. 카드 뜻·상징·질문이 글의 중심이고, 고민 제목과 이 고민의 확인된 사실·단정할 수 없는 것을 함께 쓴다.
+function composeLead(cards, item) {
+  const words = cards.map(card => card.keywords[0]).filter(Boolean);
+  return '"' + item.title + '" 고민에서 세 장이 함께 말하는 것은 ' + words.join(' · ') + '의 흐름이에요.';
+}
+function composeStory(cards, item) {
+  const [first, second, third] = cards;
+  const parts = [];
+  parts.push(first.name + ' 카드는 ' + first.meaning + ' ' + first.symbolism + ' 이 카드가 지금 고민에 던지는 질문은 "' + first.question + '"이에요.');
+  if (second) parts.push(second.name + ' 카드는 ' + second.meaning + ' 같은 고민을 다른 각도에서 보게 해요. ' + second.symbolism);
+  if (third) parts.push(third.name + ' 카드는 ' + third.meaning + ' 세 장을 함께 보면 "' + third.question + '"에 대한 행동이 보여요.');
+  parts.push('확인되는 것: ' + item.fact);
+  parts.push('단정할 수 없는 것: ' + item.uncertain);
+  return parts.join('\n\n');
+}
+
 function renderResult() {
   if (!currentCard) { startRitual(); return; }
   const category = selected.category;
@@ -236,11 +245,48 @@ function renderResult() {
   $('resultEn').textContent = currentCard.en;
   $('resultCat').textContent = category.name;
   $('resultTitle').textContent = selected.title;
-  $('readingLead').textContent = currentReading.lead;
+  const cardsForReading = [currentCard, ...(extraCards.get(selected) || [])].filter(Boolean);
+  $('readingLead').textContent = composeLead(cardsForReading, selected);
   fillKeys($('resultKeys'), currentCard.keywords);
   $('coreMeaning').textContent = currentCard.meaning;
   $('symbolism').textContent = currentCard.symbolism;
-  $('story').textContent = bridgeText();
+  const extras = extraCards.get(selected) || [];
+  const row = $('threeCards');
+  row.replaceChildren();
+  const reads = document.createElement('div');
+  reads.className = 'three-reads';
+  [currentCard, ...extras].filter(Boolean).forEach(card => {
+    const figure = document.createElement('figure');
+    const img = document.createElement('img');
+    img.src = card.image; img.alt = card.name; img.width = 96; img.height = 154;
+    const label = document.createElement('figcaption');
+    label.textContent = card.name;
+    figure.append(img, label);
+    row.append(figure);
+  });
+  [currentCard, ...extras].filter(Boolean).forEach(card => {
+    const block = document.createElement('div');
+    block.className = 'three-read';
+    const title = document.createElement('h4');
+    title.textContent = card.name + ' · 카드의 이야기';
+    const meaning = document.createElement('p');
+    meaning.textContent = card.meaning;
+    const symbol = document.createElement('p');
+    symbol.textContent = card.symbolism;
+    const ask = document.createElement('p');
+    ask.className = 'three-ask';
+    ask.textContent = '생각해 볼 질문: ' + card.question;
+    const link = document.createElement('p');
+    link.className = 'three-link';
+    link.textContent = '이 고민("' + selected.title + '")에서 ' + card.name + ' 카드는 ' + card.keywords.slice(0, 2).join(', ') + '의 흐름으로 읽혀요.';
+    block.append(title, link, meaning, symbol, ask);
+    reads.append(block);
+  });
+  if (extras.length) row.append(reads);
+  $('enlargeCard').hidden = extras.length > 0;
+  row.hidden = extras.length === 0;
+  const others = extras.map(card => card.name).join(', ');
+  $('story').textContent = composeStory(cardsForReading, selected);
   $('energyTitle').textContent = category.element + ' · ' + category.flow;
   $('energy').textContent = category.energy;
   document.querySelectorAll('.elements span').forEach(el => el.classList.toggle('active', category.element.includes(el.textContent)));
@@ -249,7 +295,7 @@ function renderResult() {
   $('action').textContent = actionText();
   $('templateText').textContent = selected.template;
   $('templateLabel').textContent = selected.template.includes('\n') ? '나를 위한 작은 점검표' : '내 말투로 바꿔 쓸 수 있는 문장';
-  $('reflection').textContent = currentReading.reflection;
+  $('reflection').textContent = cardsForReading[cardsForReading.length - 1] ? '이 고민에서 마지막 카드가 묻는 것은 "' + cardsForReading[cardsForReading.length - 1].question + '"이에요.' : currentReading.reflection;
   const note = $('note').value.trim();
   $('memo').hidden = !note;
   $('memoText').textContent = note;
@@ -371,3 +417,6 @@ function loadImage(src) {
 }
 renderCategories();
 renderList();
+
+$('toIntro').addEventListener('click', () => show('intro'));
+$('backToday').addEventListener('click', () => show('home'));

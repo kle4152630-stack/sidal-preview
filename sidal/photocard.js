@@ -99,12 +99,32 @@ async function saveCheckSummary(result) {
   }
 }
 
+// 인스타 스토리용 세로 이미지(1080x1920): 가운데에 1줄 포토카드를 넣는다. 휴대폰에서는 공유창에서 인스타그램을 고른다.
+const STORY_SIZE = {width: 1080, height: 1920};
+async function saveStoryCard(card, line) {
+  try {
+    const image = await loadImage(card.image);
+    const square = document.createElement('canvas');
+    square.width = PHOTO_SIZE.width; square.height = PHOTO_SIZE.height;
+    drawPhotoCard(square.getContext('2d'), {image, line});
+    const blob = await canvasBlob(STORY_SIZE, context => {
+      context.fillStyle = '#0c0b15';
+      context.fillRect(0, 0, STORY_SIZE.width, STORY_SIZE.height);
+      context.drawImage(square, 0, (STORY_SIZE.height - PHOTO_SIZE.height) / 2);
+    });
+    return await deliverImage(blob, 'sidal-story-' + card.id + '.png', '스토리용 포토카드를 저장했어요.');
+  } catch {
+    toast('이미지를 만들지 못했어요. 잠시 후 다시 시도해주세요.');
+    return false;
+  }
+}
+
 (function initPhotoCard() {
   const button = $('todayPhoto');
   if (!button) return;
   button.onclick = () => {
     const card = todayStored();
     if (!card) { toast('먼저 오늘의 한 장을 뒤집어 주세요.'); return; }
-    savePhotoCard(card, todaySummary(card)[1].replace(/^[^:]*:\s*/, ''));
+    saveStoryCard(card, todaySummary(card)[1].replace(/^[^:]*:\s*/, ''));
   };
 })();

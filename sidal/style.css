@@ -83,3 +83,18 @@ footer{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}#toast{bottom
 html.a11y-large main,html.a11y-large dialog{zoom:1.25}html.a11y-large body{line-height:1.85}
 html.a11y-contrast{--bg:#000;--panel:#000;--text:#fff;--muted:#f0f0f0;--lav:#ffe27a;--gold:#ffd54a;--line:#ffffffaa}html.a11y-contrast body{background:#000;color:#fff}html.a11y-contrast .fortune-block,html.a11y-contrast .report-card,html.a11y-contrast .today-lines li,html.a11y-contrast .check-row{border-color:#fff;background:#000}html.a11y-contrast button{border-color:#fff}html.a11y-contrast a{color:#ffe27a}html.a11y-contrast .stars{display:none}
 @media(max-width:600px){.a11y-bar{padding:6px 12px;gap:6px}.a11y-bar button{font-size:12px;padding:6px 10px}}
+
+/* 첫 화면의 "나의 한 걸음 찾기" 버튼을 가운데에 둔다 */
+#toIntro { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 20px auto 0; }
+
+/* 세 장 뽑기: 결과 맨 위의 세 장 줄 */
+.three-cards { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 12px 0 20px; }
+.three-cards figure { margin: 0; text-align: center; font-size: 13px; }
+.three-cards img { width: 96px; height: auto; border-radius: 8px; display: block; }
+
+/* 세 장 해석: 함께 나온 카드의 이야기 */
+.three-reads { flex-basis: 100%; display: grid; gap: 12px; margin-top: 8px; text-align: left; }
+.three-read { background: var(--ai-bubble, #1c1c2a); border: 1px solid #ffffff1a; border-radius: 14px; padding: 14px 16px; }
+.three-read h4 { font-size: 15px; margin-bottom: 6px; color: var(--gold, #d5ba86); }
+.three-read p { font-size: 14px; line-height: 1.7; margin: 4px 0; }
+.three-read .three-ask { color: var(--lav, #bda2ef); }

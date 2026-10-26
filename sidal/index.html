@@ -50,9 +50,6 @@
   <a class="brand" href="./"><span>☾</span> 사이달 <small>SIDAL</small></a>
   <nav><button id="exploreNav">고민 찾기</button><button id="fortuneNav">운세·성향 타로</button><button id="deckNav">78장 카드 도감</button><button id="about">해석 안내 ↗</button></nav>
 </header>
-<div id="a11yBar" class="a11y-bar" role="toolbar" aria-label="보기 도구">
-  <button id="a11yRead" title="브라우저에 들어 있는 읽어주기 음성을 써요. 일부 브라우저는 음성 처리에 인터넷을 쓸 수 있어요."><span aria-hidden="true">🔊</span> 읽어주기</button><button id="a11yPause" hidden>일시정지</button><button id="a11yStop" hidden>멈춤</button><button id="a11yLarge" aria-pressed="false"><span aria-hidden="true">🔤</span> 큰 글씨</button><button id="a11yContrast" aria-pressed="false"><span aria-hidden="true">◐</span> 고대비</button>
-</div>
 <main>
 <section id="home">
 <section id="todayCard" class="today-card" aria-labelledby="todayTitle">
@@ -63,9 +60,13 @@
   <div id="todayResult" class="today-result" hidden>
     <h3 id="todayName"></h3><div id="todayKeys" class="keyword-row"></div>
     <ol class="today-lines"><li id="todayLine1"></li><li id="todayLine2"></li><li id="todayLine3"></li></ol>
-    <button id="todayPhoto" class="secondary">1줄 포토카드 저장</button>
+    <button id="todayPhoto" class="secondary">스토리용 포토카드 저장</button>
   </div>
 </section>
+  <button id="toIntro" class="primary hero-button today-next" style="display:flex;margin:20px auto 0;">나의 한 걸음 찾기 <span>↗</span></button>
+</section>
+<section id="intro" hidden>
+  <button class="back" id="backToday">← 오늘의 한 장</button>
   <div class="hero">
     <div class="hero-copy">
       <div class="eyebrow"><span></span> A SYMBOL. A QUESTION. A SMALL STEP.</div>
@@ -152,13 +153,14 @@
       </span>
     </button>
   </div>
-  <div id="spread" class="spread" role="group" aria-label="뒷면이 보이는 카드 18장 중 한 장 고르기" hidden></div>
+  <div id="spread" class="spread" role="group" aria-label="뒷면이 보이는 카드 18장 중 세 장 고르기" hidden></div>
   <button class="secondary" id="reshuffle" hidden>다시 섞기 ↻</button>
   <div class="reveal-caption" id="revealCaption" hidden><h2 id="revealName"></h2><p id="revealKeys"></p><button class="primary" id="readResult">내 상황의 해석 읽기 <span>↗</span></button></div>
   <p class="fine">카드의 고유한 상징을 선택한 상황에 연결해요.</p>
 </section>
 <section id="result" hidden>
   <button class="back" id="backHome">← 다른 고민 살펴보기</button>
+  <div id="threeCards" class="three-cards" hidden></div>
   <div class="result-header">
     <figure class="reading-figure">
       <button class="art-button" id="enlargeCard" aria-label="카드 그림과 기본 뜻 크게 보기"><img id="resultImage" alt="" width="480" height="800"></button>
@@ -199,6 +201,6 @@
 <dialog id="deckModal" class="deck-modal"><div class="deck-heading"><div><div class="eyebrow">THE TAROT LIBRARY</div><h2>그림을 알고, 뜻을 읽다.</h2></div><button id="closeDeck" class="secondary" aria-label="카드 도감 닫기">닫기 ×</button></div><p class="deck-subtitle">메이저 22장 · 마이너 56장 / 정방향의 기초 의미. 카드를 누르면 그림과 상징을 크게 볼 수 있어요.</p><div id="deckFilters" class="categories" role="group" aria-label="카드 도감 분류"></div><div id="deckGrid" class="deck-grid"></div><div id="deckDetail" hidden><button id="backDeck" class="back">← 카드 목록</button><div class="deck-detail-layout"><img id="detailImage" alt="" width="480" height="800"><div><span class="tiny-label" id="detailGroup"></span><h2 id="detailName"></h2><p class="card-english" id="detailEn"></p><div class="keyword-row" id="detailKeys"></div><h3>그림 속 상징</h3><p id="detailSymbol"></p><h3>정방향으로 읽는 관점</h3><p id="detailMeaning"></p><blockquote id="detailQuestion"></blockquote></div></div></div></dialog>
 <dialog id="payModal" class="pay-modal"><button class="modal-close" id="payClose" aria-label="결제창 닫기">×</button><div class="eyebrow">TICKET</div><h2>심층 리포트 열어보기</h2><p class="fine">3단계 심층 진단과 4단계 대화 문장을 열어요. 오늘 실행할 한 가지와 카드 이야기는 언제나 무료예요.</p><div id="payProducts" class="pay-products"></div><div id="payMethods" class="pay-methods"></div><p class="fine">티켓은 이 기기의 브라우저에 저장돼요. 브라우저 데이터를 지우거나 기기를 바꾸면 사라질 수 있어요.</p><p class="fine" id="payLegal">결제하면 <a href="terms.html" target="_blank" rel="noopener">이용약관</a>과 <a href="refund.html" target="_blank" rel="noopener">환불 규정</a>(미사용 티켓은 결제 후 7일 이내 환불, 열람 후에는 환불 불가)에 동의한 것으로 봐요.</p></dialog>
 <div id="toast" role="status"></div>
-<script src="data.js"></script><script src="deck.js"></script><script src="readings.js"></script><script src="app.js"></script><script src="fortune.js"></script><script src="fortune-ui.js"></script><script src="share.js"></script><script src="tickets.js"></script><script src="payment.js"></script><script src="paywall.js"></script><script src="chem.js"></script><script src="chem-ui.js"></script><script src="accessibility.js"></script><script src="calendar.js"></script><script src="checker.js"></script><script src="checker-ui.js"></script><script src="home.js"></script><script src="photocard.js"></script>
+<script src="data.js"></script><script src="deck.js"></script><script src="readings.js"></script><script src="app.js"></script><script src="fortune.js"></script><script src="fortune-ui.js"></script><script src="share.js"></script><script src="tickets.js"></script><script src="payment.js"></script><script src="paywall.js"></script><script src="chem.js"></script><script src="chem-ui.js"></script><script src="calendar.js"></script><script src="checker.js"></script><script src="checker-ui.js"></script><script src="home.js"></script><script src="photocard.js"></script>
 </body>
 </html>
