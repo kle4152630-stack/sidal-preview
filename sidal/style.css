@@ -98,3 +98,9 @@ html.a11y-contrast{--bg:#000;--panel:#000;--text:#fff;--muted:#f0f0f0;--lav:#ffe
 .three-read h4 { font-size: 15px; margin-bottom: 6px; color: var(--gold, #d5ba86); }
 .three-read p { font-size: 14px; line-height: 1.7; margin: 4px 0; }
 .three-read .three-ask { color: var(--lav, #bda2ef); }
+
+/* 78장 펼침: 카드를 겹쳐 가로로 펼친다. 넘치면 옆으로 민다. */
+.spread{display:flex;justify-content:flex-start;align-items:flex-end;gap:0;max-width:100%;overflow-x:auto;overflow-y:visible;margin:36px auto 18px;padding:40px 24px 28px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.spread .pick-card{flex:0 0 auto;width:74px;margin-left:-44px;scroll-snap-align:center}
+.spread .pick-card:first-child{margin-left:0}
+.spread .pick-card:hover,.spread .pick-card:focus-visible{z-index:2}

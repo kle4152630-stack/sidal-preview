@@ -125,7 +125,7 @@ window.addEventListener('popstate', event => {
 });
 
 $('begin').onclick = startRitual;
-const SPREAD_SIZE = 18;
+const SPREAD_SIZE = 78; // 고민마다 78장 전체에서 세 장을 고른다
 let drawPool = [], spreadButtons = [], picks = [], extraCards = new Map();
 function randomIndex(n) {
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
