@@ -313,8 +313,6 @@ function renderResult() {
   const note = $('note').value.trim();
   $('memo').hidden = !note;
   $('memoText').textContent = note;
-  document.querySelectorAll('[data-feedback]').forEach(button => button.classList.remove('active'));
-  $('feedbackStatus').textContent = '선택한 의견은 이 브라우저에만 저장돼요. 운영자에게 전송되지 않아요.';
   show('result');
   if (typeof applyPaywall === 'function') applyPaywall();
 }
@@ -349,22 +347,10 @@ $('copyReport').onclick = () => copyText([
   '내 상황에 연결하면', bridgeText(), '오행의 비유 · ' + selected.category.element,
   selected.category.energy, '개인 사주 계산이나 타로의 전통 대응이 아닌 별도의 비유입니다.',
   ...(reportLocked() ? [] : ['확인되는 것', selected.fact, '단정할 수 없는 것', selected.uncertain]),
-  '오늘의 행동', actionText(), ...(reportLocked() ? [] : [selected.template]), '나에게 남기는 질문', currentReading.reflection,
+  '오늘의 행동', actionText(), ...(reportLocked() ? [] : [selected.template]), '나에게 남기는 질문', reflectionLine(selected),
   '직접 고른 카드와 사전 작성 해석입니다. 미래나 타인의 마음을 예측하지 않습니다.'
 ].join('\n\n'));
 
-document.querySelectorAll('[data-feedback]').forEach(button => button.onclick = () => {
-  document.querySelectorAll('[data-feedback]').forEach(b => b.classList.toggle('active', b === button));
-  try {
-    const key = 'sidal-feedback-v4';
-    let saved;
-    try { saved = JSON.parse(localStorage.getItem(key) || '[]'); } catch { saved = []; }
-    if (!Array.isArray(saved)) saved = [];
-    saved.push({situation: selected.id, card: currentCard.id, rating: button.dataset.feedback, at: Date.now()});
-    localStorage.setItem(key, JSON.stringify(saved.slice(-100)));
-    $('feedbackStatus').textContent = '이 브라우저에 의견을 저장했어요. 운영자에게는 전송되지 않아요.';
-  } catch { $('feedbackStatus').textContent = '브라우저 저장이 제한되어 의견을 저장하지 못했어요.'; }
-});
 function openAbout() { $('modal').showModal(); }
 ['about', 'noticeAbout', 'credits'].forEach(id => $(id).onclick = openAbout);
 ['close', 'closeBottom'].forEach(id => $(id).onclick = () => $('modal').close());
