@@ -38,6 +38,9 @@
         .input-box { max-width: 768px; width: 100%; background: #2f2f2f; border-radius: 16px; display: flex; align-items: center; padding: 10px 16px; border: 1px solid #424242; }
         .input-box input { flex: 1; background: transparent; border: none; color: #fff; font-size: 15px; outline: none; }
         .send-btn { background: #ececec; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #212121; font-weight: bold; font-size: 14px; }
+        .rcard { background: var(--ai-bubble); border: 1px solid #424242; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; white-space: pre-wrap; }
+        .disclaimer { font-size: 11px; line-height: 1.5; color: #8a8a8a; text-align: center; padding: 4px 16px 0; }
+        .rcard-label { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.02em; }
     </style>
 </head>
 <body>
@@ -54,6 +57,8 @@
             </div>
         </div>
     </div>
+
+    <div class="disclaimer">본 서비스는 재미와 심리적 환기를 위한 AI 타로 상담입니다. 건강·금전·법률 등 중요한 의사결정의 근거로 삼지 마세요.</div>
 
     <div class="input-wrapper-area">
         <div class="input-box">
@@ -178,7 +183,7 @@ let hist = [{ role: 'ai', text: '고민을 말해보세요. 구체적일수록 �
                     }
                 }
                 if (!acc.trim()) throw new Error('empty');
-                bubble.textContent = acc.trim();
+                renderCards(bubble, acc.trim());
                 hist.push({ role: 'ai', text: acc.trim() });
                 readingDone = true;
                 step = 3;
@@ -190,6 +195,27 @@ let hist = [{ role: 'ai', text: '고민을 말해보세요. 구체적일수록 �
                     bubble.textContent = '서버에 연결하지 못했어요. 서버를 켜고 다시 말씀해 주세요.';
                 }
             }
+        }
+
+        // 서버 답을 세 카드(카드 공개 / 조합과 반응 / 앞으로의 방향)로 나눠 보여 준다. 답 안에 "---" 줄이 있을 때만 나눈다.
+        function renderCards(bubble, text) {
+            const parts = text.split(/\n\s*---\s*\n/).map(p => p.trim()).filter(Boolean);
+            if (parts.length < 2) { bubble.textContent = text; return; }
+            const labels = ['카드 공개', '조합과 반응', '앞으로의 방향'];
+            bubble.textContent = '';
+            bubble.style.whiteSpace = 'normal';
+            parts.forEach((p, i) => {
+                const card = document.createElement('div');
+                card.className = 'rcard';
+                const label = document.createElement('div');
+                label.className = 'rcard-label';
+                label.innerText = labels[i] || '더 보기';
+                const body = document.createElement('div');
+                body.innerText = p;
+                card.appendChild(label);
+                card.appendChild(body);
+                bubble.appendChild(card);
+            });
         }
 
         function sampleReading() {
