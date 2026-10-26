@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0c0c17">
+  <title>사이달 Sidal — 카드의 상징에서, 나의 한 걸음까지</title>
+  <meta name="description" content="210가지 고민을 전통 타로의 상징으로 읽어요. 상황별 리딩과 78장 카드 도감, 오늘 실행할 작은 한 걸음.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="사이달 Sidal">
+  <meta property="og:title" content="78장 중 내 마음이 고른 한 장은? — 사이달">
+  <meta property="og:description" content="고민 하나, 카드 한 장. 끌리는 한 장을 고르면 지금 필요한 작은 한 걸음이 보여요. 생년월일·MBTI 타로도 무료로 만나 보세요.">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:url" content="__SITE_URL__/">
+  <meta property="og:image" content="__SITE_URL__/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:alt" content="밤하늘 위의 금빛 초승달과 별">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="78장 중 내 마음이 고른 한 장은? — 사이달">
+  <meta name="twitter:description" content="고민 하나, 카드 한 장. 끌리는 한 장을 고르면 지금 필요한 작은 한 걸음이 보여요. 생년월일·MBTI 타로도 무료로 만나 보세요.">
+  <meta name="twitter:image" content="__SITE_URL__/og-image.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="사이달">
+  <link rel="canonical" href="__SITE_URL__/">
+  <meta name="sidal:kakao-key" content="__KAKAO_JS_KEY__">
+  <meta name="sidal:portone-code" content="__PORTONE_IMP_CODE__">
+  <meta name="sidal:portone-pg-kakao" content="__PORTONE_PG_KAKAO__">
+  <meta name="sidal:portone-pg-toss" content="__PORTONE_PG_TOSS__">
+  <meta name="sidal:portone-pg-card" content="__PORTONE_PG_CARD__">
+  <meta name="sidal:verify-path" content="__PAYMENT_VERIFY_PATH__">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<noscript><p style="margin:0;padding:16px;text-align:center;background:#1b182a;color:#eeeaf7">사이달은 JavaScript가 켜져 있어야 사용할 수 있어요.</p></noscript>
+<div class="stars" aria-hidden="true"></div>
+<dialog id="checkerModal" class="checker-modal"><button class="modal-close" id="checkerClose" aria-label="점검창 닫기">×</button><div class="eyebrow">BEFORE YOU SEND</div><h2>보내기 전 30초 점검</h2>
+  <p class="fine">보내려는 문장을 붙여넣으면, 사실과 분명함을 먼저 보는 사람과 말투와 마음을 먼저 보는 사람에게 어떻게 읽힐 수 있는지 알려 드려요. 문장은 이 기기 안에서만 계산하고 저장하거나 보내지 않아요.</p>
+  <label for="checkerInput">보낼 문장</label>
+  <textarea id="checkerInput" maxlength="600" rows="5" placeholder="예: 어제 약속이 갑자기 취소돼서 서운했어. 다음엔 미리 말해줘."></textarea>
+  <div class="actions"><button class="primary" id="checkerGo">30초 점검하기</button><button class="secondary" id="checkerClear">지우기</button></div>
+  <div id="checkerResult" class="fortune-result" role="status"></div></dialog>
+<header>
+  <a class="brand" href="./"><span>☾</span> 사이달 <small>SIDAL</small></a>
+  <nav><button id="exploreNav">고민 찾기</button><button id="fortuneNav">운세·성향 타로</button><button id="deckNav">78장 카드 도감</button><button id="about">해석 안내 ↗</button></nav>
+</header>
+<div id="a11yBar" class="a11y-bar" role="toolbar" aria-label="보기 도구">
+  <button id="a11yRead" title="브라우저에 들어 있는 읽어주기 음성을 써요. 일부 브라우저는 음성 처리에 인터넷을 쓸 수 있어요."><span aria-hidden="true">🔊</span> 읽어주기</button><button id="a11yPause" hidden>일시정지</button><button id="a11yStop" hidden>멈춤</button><button id="a11yLarge" aria-pressed="false"><span aria-hidden="true">🔤</span> 큰 글씨</button><button id="a11yContrast" aria-pressed="false"><span aria-hidden="true">◐</span> 고대비</button>
+</div>
+<main>
+<section id="home">
+<section id="todayCard" class="today-card" aria-labelledby="todayTitle">
+  <div class="eyebrow">TODAY'S ONE CARD</div>
+  <h2 id="todayTitle">오늘의 한 장</h2>
+  <button id="todayFlip" class="today-flip" aria-label="오늘의 한 장 뒤집기"><span id="todayBack" class="today-back" aria-hidden="true">✧</span><img id="todayImage" alt="" width="480" height="800" hidden></button>
+  <p id="todayHint" role="status">카드를 눌러 오늘의 한 장을 뒤집어 보세요. 하루에 한 장만 나와요.</p>
+  <div id="todayResult" class="today-result" hidden>
+    <h3 id="todayName"></h3><div id="todayKeys" class="keyword-row"></div>
+    <ol class="today-lines"><li id="todayLine1"></li><li id="todayLine2"></li><li id="todayLine3"></li></ol>
+    <button id="todayPhoto" class="secondary">1줄 포토카드 저장</button>
+  </div>
+</section>
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span></span> A SYMBOL. A QUESTION. A SMALL STEP.</div>
+      <h1>카드 속 이야기에서<br>나의 <em>한 걸음</em>을 찾다.</h1>
+      <p>막연한 위로보다, 내 고민에 닿는 해석.<br>전통 타로의 그림과 상징을 따라<br>지금의 마음을 천천히 들여다보세요.</p>
+      <button id="explore" class="primary hero-button">내 고민의 카드 만나기 <span>↗</span></button>
+      <button id="fortuneHero" class="secondary hero-button">생년월일 타로·MBTI 성향 타로</button>
+      <button id="checkerHero" class="secondary hero-button">보내기 전 30초 점검</button>
+      <div class="hero-meta"><span>210가지 상황 리딩</span><i></i><span>78장 카드 도감</span><i></i><span>무료</span></div>
+    </div>
+    <div class="cosmos authentic-hero" aria-hidden="true">
+      <div class="orbit o1"></div><div class="orbit o2"></div><div class="planet"></div>
+      <div class="star s1">✦</div><div class="star s2">✧</div>
+      <img class="hero-card left" src="assets/tarot/18_Moon.webp" alt="" width="480" height="800">
+      <img class="hero-card right" src="assets/tarot/17_Star.webp" alt="" width="480" height="800">
+      <img class="hero-card central" src="assets/tarot/09_Hermit.webp" alt="" width="480" height="800">
+      <div class="orbit-label">RIDER–WAITE–SMITH · THE HERMIT</div>
+    </div>
+  </div>
+  <div class="notice"><span>✧</span><p>카드의 기본 뜻은 지키고, 고민에 따라 읽는 관점은 달라져요.</p><button id="noticeAbout">어떻게 해석하나요? ⓘ</button></div>
+  <section id="browse">
+    <div class="section-head"><div><div class="eyebrow">01 — FIND YOUR QUESTION</div><h2>오늘, 어떤 마음으로 왔나요?</h2></div><span class="count-tag">7 THEMES · 210 STORIES</span></div>
+    <div class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="차단, 선톡, 이직… 마음에 걸리는 단어를 찾아보세요." aria-label="고민 검색"><button id="clearSearch" hidden aria-label="검색 지우기">×</button><kbd>SEARCH</kbd></div>
+    <div id="categories" class="categories" role="group" aria-label="고민 범주"></div>
+    <div class="list-head"><h3 id="listTitle">모든 고민</h3><span id="count" role="status"></span></div>
+    <div id="situations" class="situations"></div>
+    <div id="empty" hidden><span>✧</span><h3>아직 그 단어의 이야기는 없어요.</h3><p>다른 표현으로 찾아보세요.</p><button id="resetSearch" class="secondary">전체 고민 보기</button></div>
+  </section>
+</section>
+<section id="fortune" class="stage" hidden>
+  <button class="back" id="backFortune">← 처음으로</button>
+  <div class="eyebrow">BIRTHDATE TAROT &amp; MBTI TAROT</div>
+  <h1 tabindex="-1">생년월일 타로와 MBTI 성향 타로</h1>
+  <div class="fortune-tabs" role="tablist"><button id="tab-birth" role="tab" aria-selected="true" class="active">생년월일 타로</button><button id="tab-mbti" role="tab" aria-selected="false">MBTI 성향 타로</button><button id="tab-chem" role="tab" aria-selected="false">2인 케미</button></div>
+  <div id="panel-birth" role="tabpanel">
+    <div class="fortune-views" role="group" aria-label="달력 종류"><button id="cal-solar" class="secondary" aria-pressed="true">양력</button><button id="cal-lunar" class="secondary" aria-pressed="false">음력</button></div>
+    <label for="birthInput">생년월일 8자리 (예: 19900101)</label>
+    <input id="birthInput" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="19900101">
+    <label class="share-opt" id="birthLeapWrap" hidden><input type="checkbox" id="birthLeap"> <span>윤달이에요 (음력 윤달에 태어났을 때만)</span></label>
+    <label class="share-opt"><input type="checkbox" id="birthRemember"> <span>이 기기에 기억하기 (끄면 이 화면을 닫을 때 사라져요)</span></label>
+    <p class="fortune-note">생년월일은 서버로 보내지 않고 이 브라우저 안에서만 계산해요. 기억하기를 켜면 이 기기의 저장소(localStorage)에만 남고, 아래 버튼으로 지울 수 있어요. 음력을 고르면 이 브라우저 안에서 양력 날짜로 바꿔서 계산해요(1900~2100년).</p>
+    <div class="actions"><button class="primary" id="birthGo">올해와 오늘의 카드 보기</button><button class="secondary" id="birthAgain">다른 카드로 다시 보기</button><button class="secondary" id="birthForget">기억한 생년월일 지우기</button></div>
+    <div id="birthResult" class="fortune-result" role="status"></div>
+  </div>
+  <div id="panel-mbti" role="tabpanel" hidden>
+    <label for="mbtiSelect">내 MBTI</label>
+    <select id="mbtiSelect"><option value="">고르기</option></select>
+    <div class="fortune-views" role="group" aria-label="해석 관점"><button id="view-own" class="secondary" aria-pressed="true">내 성향대로 보기</button><button id="view-opposite" class="secondary" aria-pressed="false">반대 관점으로 보기</button></div>
+    <div class="actions"><button class="primary" id="mbtiGo">오늘의 카드 보기</button><button class="secondary" id="mbtiAgain">다른 카드로 다시 보기</button></div>
+    <div id="mbtiResult" class="fortune-result" role="status"></div>
+  </div>
+  <div id="panel-chem" role="tabpanel" hidden>
+    <p class="fortune-note">두 사람의 MBTI로 만드는 대화 사용설명서예요. 서로의 마음이나 궁합의 좋고 나쁨은 단정하지 않아요.</p>
+    <label for="chemMe">내 MBTI</label>
+    <select id="chemMe"><option value="">고르기</option></select>
+    <label for="chemPartner">상대 MBTI</label>
+    <select id="chemPartner"><option value="">고르기</option></select>
+    <div class="actions"><button class="primary" id="chemGo">우리 케미 보기</button><button class="secondary" id="chemAgain">다른 카드로 다시 보기</button></div>
+    <div id="chemResult" class="fortune-result" role="status"></div>
+  </div>
+</section>
+<section id="prepare" class="stage" hidden>
+  <button class="back" id="backList">← 고민 목록으로</button>
+  <div class="eyebrow">02 — A MOMENT FOR YOURSELF</div>
+  <h1 tabindex="-1">답을 서두르기 전에,<br>나의 질문을 놓아보세요.</h1>
+  <div class="selected-question"><span id="selectedCat"></span><h2 id="selectedTitle"></h2></div>
+  <label for="note">나에게 남기는 메모 <span>선택</span></label>
+  <textarea id="note" maxlength="500" placeholder="지금 확인되는 일과 내가 가장 궁금한 점을 적어보세요."></textarea>
+  <div class="input-meta"><span>개인 메모는 나만 보는 기록이에요. 자동 해석에 반영되거나 전송되지 않아요.</span><span id="noteCount">0 / 500</span></div>
+  <button class="primary" id="begin">이 고민의 카드 펼치기 <span>✦</span></button>
+  <p class="fine">카드를 섞고, 뒷면이 보이는 카드 중에서 끌리는 한 장을 직접 골라요. 정방향 상징 리딩이며 미래를 예측하지 않아요.</p>
+</section>
+<section id="ritual" class="ritual" hidden>
+  <button class="back" id="backPrepare">← 질문으로 돌아가기</button>
+  <div class="eyebrow">03 — DRAW ONE CARD</div>
+  <h1 tabindex="-1">질문을 떠올리며,<br>끌리는 카드를 한 장 고르세요.</h1>
+  <p id="ritualHint" role="status">카드를 섞고 있어요.</p>
+  <div id="cardStage" class="card-stage">
+    <div class="tarot ghost g1" aria-hidden="true">✧</div><div class="tarot ghost g2" aria-hidden="true">✧</div><div class="tarot ghost g3" aria-hidden="true">✧</div>
+    <button id="reveal" class="flip-card" disabled aria-label="고른 카드">
+      <span class="flip-inner">
+        <span class="tarot card-back"><small>SIDAL</small><span class="seal">✧</span><b>YOUR INNER ORBIT</b><small>TOUCH TO REVEAL</small></span>
+        <span class="tarot card-front"><img id="revealImage" alt="" width="480" height="800"></span>
+      </span>
+    </button>
+  </div>
+  <div id="spread" class="spread" role="group" aria-label="뒷면이 보이는 카드 18장 중 한 장 고르기" hidden></div>
+  <button class="secondary" id="reshuffle" hidden>다시 섞기 ↻</button>
+  <div class="reveal-caption" id="revealCaption" hidden><h2 id="revealName"></h2><p id="revealKeys"></p><button class="primary" id="readResult">내 상황의 해석 읽기 <span>↗</span></button></div>
+  <p class="fine">카드의 고유한 상징을 선택한 상황에 연결해요.</p>
+</section>
+<section id="result" hidden>
+  <button class="back" id="backHome">← 다른 고민 살펴보기</button>
+  <div class="result-header">
+    <figure class="reading-figure">
+      <button class="art-button" id="enlargeCard" aria-label="카드 그림과 기본 뜻 크게 보기"><img id="resultImage" alt="" width="480" height="800"></button>
+      <figcaption><span class="card-number" id="resultNum"></span><h2 id="resultCard"></h2><span class="card-english" id="resultEn"></span></figcaption>
+    </figure>
+    <div class="reading-intro">
+      <div class="eyebrow">YOUR QUESTION, IN A DIFFERENT LIGHT</div>
+      <span class="pill" id="resultCat"></span><h1 id="resultTitle" tabindex="-1"></h1>
+      <p class="reading-lead" id="readingLead"></p>
+      <div class="meaning-panel"><span class="tiny-label">이 카드의 기본 뜻 · 정방향</span><div id="resultKeys" class="keyword-row"></div><p id="coreMeaning"></p></div>
+      <p class="reading-method">직접 고른 카드 · 정방향 상징 리딩</p>
+    </div>
+  </div>
+  <aside id="memo" hidden><div><span>MY NOTE</span><button id="deleteNote">메모 지우기</button></div><p id="memoText"></p><small>직접 적은 메모예요. 해석은 선택한 상황을 기준으로 작성돼요.</small></aside>
+  <div class="report">
+    <article class="report-card full story-panel"><div class="report-label"><span>01</span> THE CARD & YOUR STORY <i>✧</i></div><h2>그림의 상징이 내 고민과 만나는 곳</h2><div class="story-layout"><div><h3>그림에서 발견한 단서</h3><p id="symbolism"></p></div><div><h3>내 상황에 연결하면</h3><p id="story"></p></div></div></article>
+    <article class="report-card"><div class="report-label"><span>02</span> FIVE ELEMENTS <i>☯</i></div><h2 id="energyTitle"></h2><div class="elements"><span>木</span><span>火</span><span>土</span><span>金</span><span>水</span></div><p id="energy"></p><small>오행은 별도의 비유예요. 타로의 전통 대응이나 개인 사주 계산을 뜻하지 않아요.</small></article>
+    <article class="report-card"><div class="report-label"><span>03</span> FACT & INTERPRETATION <i>◎</i></div><h2>보이는 일과, 아직 모르는 마음</h2><div class="lock-zone"><div class="reality"><div><span>선택한 상황에서 확인되는 것</span><p id="fact"></p></div><div><span>아직 단정할 수 없는 것</span><p id="uncertain"></p></div></div><div class="lock-host" id="lockHostFact"></div></div></article>
+    <article class="report-card full solution"><div class="report-label"><span>04</span> YOUR NEXT SMALL STEP <i>↗</i></div><h2>오늘 실행할 수 있는 한 가지</h2><p id="action"></p><div class="lock-zone"><div class="template"><div><span id="templateLabel"></span><button id="copyTemplate">복사하기 ↗</button></div><blockquote id="templateText"></blockquote></div><div class="lock-host" id="lockHostTemplate"></div></div><small>상대가 연락을 거절했다면 문장을 전송하지 마세요. 내 상황과 말투에 맞게 바꿔 사용하세요.</small></article>
+  </div>
+  <section class="reflection-panel"><div class="eyebrow">A QUESTION TO TAKE WITH YOU</div><h2 id="reflection"></h2><p>바로 답하지 않아도 괜찮아요. 내 마음에 남는 부분부터 생각해보세요.</p></section>
+  <p class="ticket-badge" id="ticketBadge" hidden></p>
+  <div class="actions"><button class="primary" id="download">스토리용 이미지 저장 <span>↓</span></button><button class="secondary" id="copyReport">전체 해석 복사 ↗</button></div>
+  <section class="share" aria-labelledby="shareHeading">
+    <h3 id="shareHeading">이 카드, 친구에게도 보여줄까요?</h3>
+    <div class="share-buttons"><button class="share-kakao" id="shareKakao">카카오톡으로 공유하기</button><button class="secondary" id="copyLink">링크 복사</button></div>
+    <input class="share-link-field" id="shareLinkField" type="text" readonly hidden aria-label="공유 링크">
+    <label class="share-opt"><input type="checkbox" id="shareTitle"> <span>내 고민 제목과 오늘의 한 걸음도 함께 보내기</span></label>
+    <p class="fine">기본으로는 카드 이야기와 요약만 보내요. 위 칸을 켜면 고민 제목이 메시지와 저장 이미지에 들어가요. 개인 메모는 어디에도 포함되지 않아요.</p>
+  </section>
+  <div class="feedback"><h3>이번 해석은 내 고민에 닿았나요?</h3><button data-feedback="구체적으로 와닿아요">구체적으로 와닿아요</button><button data-feedback="아직 뻔해요">아직 뻔해요</button><button data-feedback="카드 연결이 어색해요">카드 연결이 어색해요</button><p id="feedbackStatus"></p></div>
+  <button class="back" id="again">다른 고민의 카드 만나기 ↗</button>
+  <p class="fine">타로는 미래나 타인의 마음을 확인하는 방법이 아니에요.<br>중요한 결정은 실제 정보와 상황을 바탕으로 내려주세요.</p>
+</section>
+</main>
+<footer><a class="brand" href="./">☾ 사이달 <small>SIDAL</small></a><p>카드의 상징에서, 나의 한 걸음까지.</p><button id="credits">카드 그림 출처</button><a class="legal-link" href="privacy.html">이용 안내·개인정보</a><span id="paidLegal" hidden><a class="legal-link" href="terms.html">이용약관</a> <a class="legal-link" href="refund.html">환불 규정</a> <a class="legal-link" href="seller.html">사업자 정보</a></span><span>EDITION 05 · SYMBOL & STORY</span><p class="disclaimer">본 서비스는 상담, 의학, 법률 조언을 대체하지 않습니다.</p><div id="bizInfo" class="biz-info" hidden><b>사업자 정보</b> 상호명 [입력 필요] · 대표자 [입력 필요] · 사업자등록번호 [입력 필요] · 통신판매업 신고번호 [입력 필요] · 연락처 [입력 필요]</div></footer>
+<dialog id="modal"><button class="modal-close" id="close" aria-label="안내 닫기">×</button><div class="eyebrow">ABOUT SIDAL</div><h2>상징은 그대로,<br>해석은 내 상황 가까이.</h2><p>Rider–Waite–Smith 계열의 전통 도상과 정방향 기본 의미를 바탕으로 읽어요. 카드 해석은 학파와 독자에 따라 다를 수 있어요.</p><p>상황 해석(확인되는 것, 단정할 수 없는 것, 행동)은 210개 상황마다 미리 작성한 내용이에요. 카드는 78장을 섞은 뒤 직접 한 장을 골라요. 실시간 AI 분석은 아니에요. 카드 도감에서는 메이저 22장과 마이너 56장의 그림과 기초 의미를 볼 수 있어요.</p><p>오행은 상황을 돌아보는 별도의 비유이며 생년월일시로 계산한 사주가 아니에요. 개인 메모는 화면 안에서만 쓰고 새로고침하면 사라져요.</p><p class="attribution">그림: Pamela Colman Smith · 구성: A. E. Waite (1909). 스캔 복원: Steve P. · 배포: mixvlad/TarotCards. 원본 도상의 번호와 제목을 보존했어요. <a href="assets/tarot/ATTRIBUTION.md" target="_blank" rel="noopener">상세 출처 보기 ↗</a></p><button class="primary" id="closeBottom">이해했어요 <span>✧</span></button></dialog>
+<dialog id="deckModal" class="deck-modal"><div class="deck-heading"><div><div class="eyebrow">THE TAROT LIBRARY</div><h2>그림을 알고, 뜻을 읽다.</h2></div><button id="closeDeck" class="secondary" aria-label="카드 도감 닫기">닫기 ×</button></div><p class="deck-subtitle">메이저 22장 · 마이너 56장 / 정방향의 기초 의미. 카드를 누르면 그림과 상징을 크게 볼 수 있어요.</p><div id="deckFilters" class="categories" role="group" aria-label="카드 도감 분류"></div><div id="deckGrid" class="deck-grid"></div><div id="deckDetail" hidden><button id="backDeck" class="back">← 카드 목록</button><div class="deck-detail-layout"><img id="detailImage" alt="" width="480" height="800"><div><span class="tiny-label" id="detailGroup"></span><h2 id="detailName"></h2><p class="card-english" id="detailEn"></p><div class="keyword-row" id="detailKeys"></div><h3>그림 속 상징</h3><p id="detailSymbol"></p><h3>정방향으로 읽는 관점</h3><p id="detailMeaning"></p><blockquote id="detailQuestion"></blockquote></div></div></div></dialog>
+<dialog id="payModal" class="pay-modal"><button class="modal-close" id="payClose" aria-label="결제창 닫기">×</button><div class="eyebrow">TICKET</div><h2>심층 리포트 열어보기</h2><p class="fine">3단계 심층 진단과 4단계 대화 문장을 열어요. 오늘 실행할 한 가지와 카드 이야기는 언제나 무료예요.</p><div id="payProducts" class="pay-products"></div><div id="payMethods" class="pay-methods"></div><p class="fine">티켓은 이 기기의 브라우저에 저장돼요. 브라우저 데이터를 지우거나 기기를 바꾸면 사라질 수 있어요.</p><p class="fine" id="payLegal">결제하면 <a href="terms.html" target="_blank" rel="noopener">이용약관</a>과 <a href="refund.html" target="_blank" rel="noopener">환불 규정</a>(미사용 티켓은 결제 후 7일 이내 환불, 열람 후에는 환불 불가)에 동의한 것으로 봐요.</p></dialog>
+<div id="toast" role="status"></div>
+<script src="data.js"></script><script src="deck.js"></script><script src="readings.js"></script><script src="app.js"></script><script src="fortune.js"></script><script src="fortune-ui.js"></script><script src="share.js"></script><script src="tickets.js"></script><script src="payment.js"></script><script src="paywall.js"></script><script src="chem.js"></script><script src="chem-ui.js"></script><script src="accessibility.js"></script><script src="calendar.js"></script><script src="checker.js"></script><script src="checker-ui.js"></script><script src="home.js"></script><script src="photocard.js"></script>
+</body>
+</html>

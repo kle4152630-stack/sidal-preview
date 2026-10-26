@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0c0c17">
+<title>사이달 AI 상담</title>
+<style>
+:root{--bg:#0c0c17;--panel:#151522;--panel2:#1c1a2b;--line:#ffffff1f;--text:#eeeaf7;--muted:#a8a3bd;--lav:#bda2ef;--gold:#d5ba86;--ok:#8fd3a6;--bad:#f2a3a3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 80% -10%,#30203f66,transparent 45%),var(--bg);color:var(--text);font:16px/1.75 'Apple SD Gothic Neo','Malgun Gothic',Arial,sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:640px;margin:auto;padding:20px 16px 56px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.brand{font-size:20px;font-weight:600;letter-spacing:.5px}
+.brand span{color:var(--gold);margin-right:6px}
+.badge{font-size:12px;color:var(--gold);border:1px solid #d5ba8655;border-radius:20px;padding:4px 10px}
+.steps{display:flex;gap:8px;list-style:none;padding:0;margin:14px 0 4px;font-size:13px;color:var(--muted)}
+.steps li{display:flex;align-items:center;gap:6px}
+.steps li+li:before{content:'';width:18px;height:1px;background:var(--line)}
+.steps b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);font-size:12px;font-weight:600}
+.steps li[aria-current=step]{color:var(--text)}
+.steps li[aria-current=step] b{background:var(--lav);color:#191224;border-color:var(--lav)}
+h1{font:400 26px/1.5 Georgia,'Batang',serif;margin:14px 0 6px;word-break:keep-all}
+h1:focus{outline:none}
+.lead{color:var(--muted);margin:0 0 16px;word-break:keep-all}
+.notice{border:1px solid #bda2ef40;background:#bda2ef10;border-radius:12px;padding:12px 14px;margin:0 0 18px;font-size:14px;line-height:1.7;word-break:keep-all}
+label,.label{display:block;margin:18px 0 6px;font-weight:600;font-size:15px}
+.hint{color:var(--muted);font-size:13px;font-weight:400;margin-left:6px}
+textarea,input[type=text]{width:100%;border:1px solid #ffffff2e;border-radius:12px;background:var(--panel);color:var(--text);padding:14px;font:inherit;min-height:48px}
+textarea{min-height:130px;resize:vertical}
+textarea:focus,input:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--lav);outline-offset:3px}
+.count{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:4px}
+.err{color:var(--bad);font-size:14px;margin:6px 0 0}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:8px 0 10px}
+.num{min-height:44px;min-width:44px;border:1px solid #ffffff2e;border-radius:10px;background:var(--panel);color:var(--text);font:inherit;font-size:15px;cursor:pointer}
+.num[aria-pressed=true]{background:var(--lav);color:#191224;border-color:var(--lav);font-weight:700}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{min-height:48px;border-radius:12px;border:1px solid #ffffff2e;background:var(--panel2);padding:0 18px;font-size:15px}
+.primary{width:100%;min-height:54px;border:0;background:linear-gradient(120deg,#c7aef0,#a07fd3);color:#191224;font-weight:700;font-size:16px;border-radius:14px;margin-top:22px}
+.picked{color:var(--gold);font-size:14px}
+[hidden]{display:none!important}
+
+/* 카드 펼침 연출 */
+.reveal{display:grid;place-items:center;padding:34px 0 26px;perspective:900px}
+.reveal p{margin:18px 0 0;color:var(--muted);font-size:14px}
+.flip{position:relative;width:128px;height:214px;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.2,.8,.3,1)}
+.flip.on{transform:rotateY(180deg)}
+.flip>*{position:absolute;inset:0;backface-visibility:hidden;border-radius:8px}
+.flip .back{display:grid;place-items:center;color:var(--gold);font-size:38px;border:1px solid #b89c655c;background:repeating-linear-gradient(45deg,#211c31,#211c31 8px,#282139 9px,#282139 10px)}
+.flip img{transform:rotateY(180deg);width:100%;height:100%;object-fit:contain;background:#f4ead8;box-shadow:0 14px 34px #0008}
+
+/* 결과 4박스 */
+.box{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:16px 16px 12px;margin:14px 0}
+.box h2{display:flex;align-items:center;gap:8px;font-size:14px;letter-spacing:.3px;color:var(--gold);margin:0 0 10px;font-weight:600}
+.box h2 i{font-style:normal;display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:50%;background:#d5ba861f;border:1px solid #d5ba8655;font-size:12px}
+.box p{margin:0 0 8px;word-break:keep-all;overflow-wrap:anywhere}
+.box.summary{border-color:#d5ba8660;background:linear-gradient(150deg,#2a2340,#161524)}
+.box.summary p{font:21px/1.65 Georgia,'Batang',serif;margin:0 0 6px}
+.cardrow{display:flex;gap:14px;align-items:flex-start}
+.cardrow img{width:104px;height:auto;border-radius:6px;flex:0 0 auto;box-shadow:0 10px 26px #0007}
+.cardrow .t{font-weight:600}
+.box.step{border-color:#bda2ef66;background:linear-gradient(150deg,#241f3a,#161524)}
+.act{font-size:18px;line-height:1.65;font-weight:600}
+.how{margin:8px 0 10px;padding:10px 14px;border-left:3px solid var(--lav);background:#bda2ef12;border-radius:0 10px 10px 0}
+.how small{display:block;color:var(--muted);font-size:12px;margin-bottom:2px}
+.how p{margin:0 0 4px}
+.muted{color:var(--muted);font-size:14px}
+.expert{border-color:#d5ba8680;background:#d5ba860f}
+.crisis{border-color:#f2a3a380;background:#f2a3a30d}
+.crisis p{font-size:17px}
+details{border:1px solid var(--line);border-radius:14px;padding:4px 14px;margin:14px 0;background:var(--panel)}
+summary{min-height:48px;display:flex;align-items:center;cursor:pointer;font-weight:600}
+.sub{padding:2px 0 8px;border-top:1px solid var(--line);margin-top:2px}
+.sub h3{font-size:13px;color:var(--gold);margin:12px 0 4px;font-weight:600}
+.sub p,.sub li{margin:0 0 6px;word-break:keep-all;overflow-wrap:anywhere;font-size:15px}
+.sub ul{margin:0;padding-left:20px}
+.fine{color:var(--muted);font-size:13px;line-height:1.7;margin:14px 0 4px}
+.closing{margin:14px 0;padding:14px;border:1px dashed #ffffff40;border-radius:12px;color:var(--text);font-size:15px;word-break:keep-all}
+.tools{display:grid;gap:10px;margin:18px 0}
+.checks{list-style:none;padding:0;margin:8px 0 0}
+.checks li{display:flex;gap:8px;font-size:14px;margin-bottom:4px}
+.pass{color:var(--ok);white-space:nowrap}.fail{color:var(--bad);white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#dcc7f5;color:#271d34;padding:12px 20px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
+.toast.on{opacity:1}
+footer{margin-top:26px;color:var(--muted);font-size:13px;line-height:1.7}
+@media(max-width:380px){.grid{grid-template-columns:repeat(5,1fr)}h1{font-size:23px}.box.summary p{font-size:19px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="brand"><span>☾</span>사이달</div>
+  <span class="badge">초안 · 배포 안 됨</span>
+</header>
+<ol class="steps" aria-label="진행 단계">
+  <li id="s1" aria-current="step"><b>1</b>신청</li>
+  <li id="s2"><b>2</b>번호</li>
+  <li id="s3"><b>3</b>결과</li>
+</ol>
+
+<section id="form" aria-labelledby="formTitle">
+  <h1 id="formTitle" tabindex="-1">AI 상담 신청</h1>
+  <p class="lead">상황, 고민, 목표만 적고 번호 하나를 고르면 결과 창이 열려요.</p>
+  <div class="notice">입력한 내용은 이 기기 안에서만 처리하고 서버로 보내지 않아요. 이름, 연락처, 주민번호, 계좌번호 같은 개인정보는 적지 마세요.</div>
+  <form id="f" novalidate>
+    <label for="situation">상황 <span class="hint">언제, 누구와, 무슨 일이 있었는지</span></label>
+    <textarea id="situation" maxlength="400" aria-describedby="situationErr situationCount" autocomplete="off"></textarea>
+    <div class="count"><span id="situationErr" class="err" role="alert"></span><span id="situationCount">0 / 400</span></div>
+
+    <label for="worry">고민 <span class="hint">한 줄</span></label>
+    <input id="worry" type="text" maxlength="100" aria-describedby="worryErr" autocomplete="off">
+    <div id="worryErr" class="err" role="alert"></div>
+
+    <label for="goal">목표 <span class="hint">이 상담이 끝나고 달라지고 싶은 것 한 줄</span></label>
+    <input id="goal" type="text" maxlength="100" aria-describedby="goalErr" autocomplete="off">
+    <div id="goalErr" class="err" role="alert"></div>
+
+    <div class="label" id="pickLabel">번호 하나를 골라요 <span class="hint">1~78, 무의식이 이끄는 대로</span></div>
+    <div class="grid" id="grid" role="group" aria-labelledby="pickLabel"></div>
+    <div class="row"><button type="button" class="btn" id="random">무작위로 고르기</button><span class="picked" id="picked" aria-live="polite">아직 고르지 않았어요</span></div>
+
+    <button type="submit" class="primary">카드 펼치고 상담 결과 보기</button>
+  </form>
+</section>
+
+<section id="result" hidden aria-labelledby="resultTitle">
+  <h1 id="resultTitle" tabindex="-1">AI 상담 결과</h1>
+  <p class="lead" id="lead"></p>
+  <div id="reveal" class="reveal" hidden aria-live="polite">
+    <div class="flip" id="flip"><div class="back" aria-hidden="true">✧</div><img id="flipImg" alt=""></div>
+    <p>카드를 펼치고 있어요…</p>
+  </div>
+  <div id="sections"></div>
+  <div class="tools" id="tools">
+    <button type="button" class="btn" id="copyText">결과 복사하기</button>
+    <button type="button" class="btn" id="copyPrompt">AI에게 더 맡기기 (프롬프트 복사)</button>
+    <button type="button" class="btn" id="again">입력 고치고 다시 보기</button>
+  </div>
+  <details id="opsBox">
+    <summary>운영자용 품질 점검</summary>
+    <ul class="checks" id="checks"></ul>
+    <p class="muted" style="margin:8px 0 10px">매칭된 상황: <span id="matchInfo"></span></p>
+  </details>
+</section>
+
+<footer>
+  <p>이 화면은 초안이에요. 실제 AI 모델이 아니라 사이달의 210개 상황·78장 카드 데이터와 규칙으로 조립한 결과이고, 더 풍부한 문장이 필요하면 프롬프트를 Claude·GPT 같은 AI에 붙여 넣어 다듬을 수 있어요.</p>
+  <p>본 서비스는 전문 상담, 의학, 법률 조언을 대체하지 않습니다.</p>
+</footer>
+</main>
+<div id="toast" class="toast" role="status"></div>
+
+<script src="../dist/data.js"></script>
+<script src="../dist/deck.js"></script>
+<script src="../dist/readings.js"></script>
+<script src="card-lens.js"></script>
+<script src="engine.js"></script>
+<script>
+(function () {
+  // 운영자 마무리 안내는 engine.js의 기본 문구를 쓴다. 바꾸려면 아래 줄을 {closing: '새 문구'}로, 끄려면 {closing: ''}로 고친다.
+  var engine = SidalConsult.create({CATEGORIES: CATEGORIES, TAROT_DECK: TAROT_DECK, SITUATION_READINGS: SITUATION_READINGS});
+  var $ = function (id) { return document.getElementById(id); };
+  var picked = 0, last = null, toastTimer, revealTimer;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var grid = $('grid');
+  for (var n = 1; n <= TAROT_DECK.length; n++) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'num'; b.textContent = n; b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', n + '번');
+    b.dataset.n = n; grid.appendChild(b);
+  }
+  grid.addEventListener('click', function (e) { var t = e.target.closest('.num'); if (t) pick(Number(t.dataset.n)); });
+  function pick(n) {
+    picked = n;
+    Array.prototype.forEach.call(grid.children, function (el) { el.setAttribute('aria-pressed', String(Number(el.dataset.n) === n)); });
+    $('picked').textContent = n + '번을 골랐어요';
+    step(2);
+  }
+  function step(k) {
+    [1, 2, 3].forEach(function (i) { var li = $('s' + i); if (i === k) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current'); });
+  }
+  $('random').onclick = function () { pick(1 + Math.floor(Math.random() * TAROT_DECK.length)); };
+  $('situation').addEventListener('input', function () { $('situationCount').textContent = this.value.length + ' / 400'; });
+
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('on'); }, 2600);
+  }
+  function copy(text, ok) {
+    function fallback() {
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); toast(ok); } catch (e) { toast('복사하지 못했어요. 직접 선택해 복사해 주세요.'); }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(ok); }, fallback);
+    else fallback();
+  }
+
+  $('f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    ['situation', 'worry', 'goal'].forEach(function (k) { $(k + 'Err').textContent = ''; });
+    var res = engine.consult({situation: $('situation').value, worry: $('worry').value, goal: $('goal').value, cardNumber: picked});
+    if (!res.ok) { res.errors.forEach(function (er) { $(er.field + 'Err').textContent = er.message; }); $(res.errors[0].field).focus(); return; }
+    if (res.mode === 'reading' && !picked) { toast('번호를 하나 골라 주세요. 아무 숫자나 괜찮아요.'); $('random').focus(); return; }
+    last = res; open(res);
+  });
+
+  function open(res) {
+    $('form').hidden = true; $('result').hidden = false; step(3);
+    window.scrollTo(0, 0);
+    $('sections').textContent = ''; $('tools').hidden = true; $('opsBox').hidden = true;
+    if (res.mode === 'reading' && !reduced) {
+      $('flipImg').src = '../dist/' + res.card.image; $('flipImg').alt = res.card.name + ' 카드';
+      $('flip').classList.remove('on'); $('reveal').hidden = false;
+      $('resultTitle').focus();
+      setTimeout(function () { $('flip').classList.add('on'); }, 60);
+      clearTimeout(revealTimer);
+      revealTimer = setTimeout(function () { show(res); }, 1500);
+    } else show(res);
+  }
+
+  function el(tag, cls, text) { var x = document.createElement(tag); if (cls) x.className = cls; if (text != null) x.textContent = text; return x; }
+  function box(sec, cls, idx) {
+    var b = el('section', 'box' + (cls ? ' ' + cls : ''));
+    var h = el('h2'); if (idx) h.appendChild(el('i', '', idx)); h.appendChild(document.createTextNode(sec.title)); b.appendChild(h);
+    return b;
+  }
+  function lines(parent, arr, cls) { arr.forEach(function (t) { parent.appendChild(el('p', cls, t)); }); }
+
+  function show(res) {
+    $('reveal').hidden = true;
+    var host = $('sections'); host.textContent = '';
+    var by = {}; res.sections.forEach(function (s) { by[s.key] = s; });
+
+    if (res.mode === 'crisis') {
+      var cb = box(by.care, 'crisis'); lines(cb, by.care.lines); host.appendChild(cb);
+      host.appendChild(el('p', 'fine', by.disclaimer.lines[0]));
+    } else {
+      var s1 = box(by.summary, 'summary', '1'); lines(s1, by.summary.lines); host.appendChild(s1);
+
+      var s2 = box(by.card, '', '2'); var row = el('div', 'cardrow');
+      var img = el('img'); img.src = '../dist/' + res.card.image; img.alt = res.card.name + ' 카드 그림'; img.width = 104;
+      var txt = el('div'); txt.appendChild(el('p', 't', by.card.lines[0])); lines(txt, by.card.lines.slice(1));
+      row.appendChild(img); row.appendChild(txt); s2.appendChild(row); host.appendChild(s2);
+
+      var s3 = box(by.mirror, '', '3'); lines(s3, by.mirror.lines); host.appendChild(s3);
+
+      var s4 = box(by.step, 'step', '4'); var L = by.step.lines;
+      s4.appendChild(el('p', 'act', L[0]));
+      var how = el('div', 'how'); how.appendChild(el('small', '', '이렇게 해봐요'));
+      lines(how, [L[1].replace(/^이렇게 해봐요:\s*/, '')].concat(L.slice(2, L.length - 1)));
+      s4.appendChild(how); s4.appendChild(el('p', 'muted', L[L.length - 1])); host.appendChild(s4);
+
+      if (by.expert) { var ex = box(by.expert, 'expert'); lines(ex, by.expert.lines); host.appendChild(ex); }
+
+      var d = el('details'); d.appendChild(el('summary', '', '자세히 보기 — 사실과 추측 · 7일 계획 · 쓸 수 있는 문장 · 질문'));
+      var sub = el('div', 'sub');
+      ['yours', 'fact', 'unknown', 'trap', 'plan', 'sentence', 'questions'].forEach(function (k) {
+        var s = by[k]; if (!s) return;
+        sub.appendChild(el('h3', '', s.title));
+        if (k === 'plan' || k === 'questions') { var ul = el('ul'); s.lines.forEach(function (t) { ul.appendChild(el('li', '', t)); }); sub.appendChild(ul); }
+        else lines(sub, s.lines);
+      });
+      d.appendChild(sub); host.appendChild(d);
+      lines(host, by.disclaimer.lines, 'fine');
+      if (by.closing) host.appendChild(el('p', 'closing', by.closing.lines[0]));
+    }
+
+    $('lead').textContent = res.lead || '';
+    $('copyPrompt').hidden = res.mode !== 'reading';
+    $('tools').hidden = false; $('opsBox').hidden = false;
+    var ul2 = $('checks'); ul2.textContent = '';
+    engine.selfCheck(res).forEach(function (c) {
+      var li = el('li'); li.appendChild(el('span', c.pass ? 'pass' : 'fail', c.pass ? '통과' : '실패'));
+      li.appendChild(el('span', '', c.id + ' ' + c.label + (c.detail && !c.pass ? ' — ' + c.detail : ''))); ul2.appendChild(li);
+    });
+    $('matchInfo').textContent = res.matched ? res.matched.title + ' (' + res.matched.category + ', 일치도 ' + res.matched.score + ')' : '가까운 상황 없음(일반 모드)';
+    window.scrollTo(0, 0); $('resultTitle').focus();
+  }
+
+  $('copyText').onclick = function () { if (last) copy(last.text, '결과를 복사했어요'); };
+  $('copyPrompt').onclick = function () { if (last) copy(engine.buildPrompt(last), '프롬프트를 복사했어요. AI에 붙여 넣으세요 (개인정보는 지우고)'); };
+  $('again').onclick = function () { clearTimeout(revealTimer); $('result').hidden = true; $('form').hidden = false; step(picked ? 2 : 1); window.scrollTo(0, 0); $('formTitle').focus(); };
+})();
+</script>
+</body>
+</html>
