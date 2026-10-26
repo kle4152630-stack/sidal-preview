@@ -82,7 +82,7 @@
         const LINES = ['"이번 주에 시간 괜찮은 날 있어? 같이 커피 한잔하고 싶은데."','"이건 마감을 하루만 조정할 수 있을까?"','"이번 주에 밀린 게 좀 많아서, 우선순위 10분만 같이 봐줄 수 있어?"'];
 
         // 타로친구AI 서버(채팅 데모). 이 컴퓨터에서 켜져 있어야 실제 AI 답이 나온다. 꺼져 있으면 샘플 결과를 보여 준다.
-const SERVER = ''; // 공개본은 서버 없이 샘플 결과만 보여 준다
+const SERVER = ''; // 공개본은 서버 없이 대체 결과를 보여 준다
 const KEY = '';
 
 let step = 0, concern = '', nums = [], tone = '', readingDone = false;
@@ -155,11 +155,14 @@ let hist = [{ role: 'ai', text: '고민을 말해보세요. 구체적일수록 �
             const bubble = appendMessage('…', 'ai', true);
             bubble.style.whiteSpace = 'pre-wrap';
             let acc = '';
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 30000);
             try {
                 const r = await fetch(SERVER + '/chat', {
                     method: 'POST',
                     headers: { 'content-type': 'application/json', 'x-key': KEY },
-                    body: JSON.stringify({ messages: hist })
+                    body: JSON.stringify({ messages: hist }),
+                    signal: controller.signal
                 });
                 if (!r.ok || !r.body) throw new Error('bad status ' + r.status);
                 const reader = r.body.getReader();
@@ -189,11 +192,16 @@ let hist = [{ role: 'ai', text: '고민을 말해보세요. 구체적일수록 �
                 step = 3;
             } catch (e) {
                 if (!readingDone) {
-                    bubble.textContent = '서버에 연결하지 못해서 샘플 결과로 보여 드릴게요. (이 컴퓨터에서 타로친구AI 서버를 켜 주세요.)';
+                    bubble.parentElement.remove();
                     sampleReading();
                 } else {
-                    bubble.textContent = '서버에 연결하지 못했어요. 서버를 켜고 다시 말씀해 주세요.';
+                    const lastUser = hist.length ? hist[hist.length - 1].text : '';
+                    const answer = followUp(lastUser);
+                    bubble.textContent = answer;
+                    hist.push({ role: 'ai', text: answer });
                 }
+            } finally {
+                clearTimeout(timer);
             }
         }
 
