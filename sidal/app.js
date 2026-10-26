@@ -235,6 +235,20 @@ function composeStory(cards, item) {
   return parts.join('\n\n');
 }
 
+// 마지막 자리: 고민 종류에 맞춘 한 줄. 감정을 먼저 받고, 생각해 볼 질문으로 끝난다.
+const REFLECTION_WORDS = {
+  0: {feel: '연락하고 싶은 마음', ask: '연락하면 어떤 답을 기대하게 될지'},
+  1: {feel: '연락하고 싶은 마음', ask: '연락하면 어떤 답을 기대하게 될지'},
+  2: {feel: '그 얘기를 꺼내고 싶은 마음', ask: '그 얘기를 꺼내면 어떤 반응을 기대하게 될지'},
+  3: {feel: '마음을 전하고 싶은 마음', ask: '마음을 전하면 어떤 답을 기대하게 될지'},
+  4: {feel: '지금 결정을 서두르고 싶은 마음', ask: '그 선택을 하면 어떤 결과를 기대하게 될지'},
+  5: {feel: '지금 당장 쓰고 싶은 마음', ask: '그 지출로 무엇을 얻고 싶은지'},
+  6: {feel: '그 말을 꺼내고 싶은 마음', ask: '그 말을 하면 어떤 답을 기대하게 될지'}
+};
+function reflectionLine(item) {
+  const words = REFLECTION_WORDS[item.category.id] || REFLECTION_WORDS[0];
+  return words.feel + '은 자연스러워요. ' + words.ask + ', 먼저 떠올려 보세요.';
+}
 function renderResult() {
   if (!currentCard) { startRitual(); return; }
   const category = selected.category;
@@ -295,7 +309,7 @@ function renderResult() {
   $('action').textContent = actionText();
   $('templateText').textContent = selected.template;
   $('templateLabel').textContent = selected.template.includes('\n') ? '나를 위한 작은 점검표' : '내 말투로 바꿔 쓸 수 있는 문장';
-  $('reflection').textContent = cardsForReading[cardsForReading.length - 1] ? '이 고민에서 마지막 카드가 묻는 것은 "' + cardsForReading[cardsForReading.length - 1].question + '"이에요.' : currentReading.reflection;
+  $('reflection').textContent = reflectionLine(selected);
   const note = $('note').value.trim();
   $('memo').hidden = !note;
   $('memoText').textContent = note;
