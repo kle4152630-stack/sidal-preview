@@ -104,3 +104,8 @@ html.a11y-contrast{--bg:#000;--panel:#000;--text:#fff;--muted:#f0f0f0;--lav:#ffe
 .spread .pick-card{flex:0 0 auto;width:74px;margin-left:-44px;scroll-snap-align:center}
 .spread .pick-card:first-child{margin-left:0}
 .spread .pick-card:hover,.spread .pick-card:focus-visible{z-index:2}
+
+/* 출시 알림 신청 칸 */
+.waitlist { max-width: 560px; margin: 28px auto; padding: 18px; text-align: center; border: 1px solid #ffffff1a; border-radius: 16px; }
+.waitlist-lead { margin-bottom: 12px; }
+.waitlist-button { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; padding: 0 20px; text-decoration: none; }

@@ -249,6 +249,8 @@ function reflectionLine(item) {
   const words = REFLECTION_WORDS[item.category.id] || REFLECTION_WORDS[0];
   return words.feel + '은 자연스러워요. ' + words.ask + ', 먼저 떠올려 보세요.';
 }
+// 출시 알림 신청 폼 주소. 비워 두면 신청 칸은 보이지 않는다. 구글 폼을 만든 뒤 주소를 넣는다.
+const WAITLIST_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScqA1MJG0uVkdmcBPxZiLJrazE_zAXRcdBUGp4wk6v7ADz0pA/viewform';
 function renderResult() {
   if (!currentCard) { startRitual(); return; }
   const category = selected.category;
@@ -313,6 +315,8 @@ function renderResult() {
   const note = $('note').value.trim();
   $('memo').hidden = !note;
   $('memoText').textContent = note;
+  $('waitlist').hidden = !WAITLIST_URL;
+  if (WAITLIST_URL) $('waitlistLink').href = WAITLIST_URL;
   show('result');
   if (typeof applyPaywall === 'function') applyPaywall();
 }
