@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>타로 친구 — 클릭 몇 번으로 고민 정리</title>
+<meta name="description" content="한 화면에 질문 하나. 눌러서 고르고, 번호를 고르면 타로 카드의 상징으로 생각을 정리해 드려요.">
+<meta property="og:title" content="타로 친구 — 클릭 몇 번으로 고민 정리">
+<meta property="og:description" content="고민 종류를 고르고, 카드 번호를 고르면 끝. 재미와 자기 성찰을 위한 타로 글 상담이에요.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='20' fill='%231d4ed8'/%3E%3Ctext x='32' y='43' font-size='34' font-weight='700' text-anchor='middle' fill='%23ffffff' font-family='sans-serif'%3E%ED%83%80%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="step.css">
+</head>
+<body class="stepbody">
+<noscript><p class="noscript">타로 친구는 자바스크립트가 켜져 있어야 쓸 수 있어요. 브라우저 설정에서 켜 주세요.</p></noscript>
+<header class="stephead">
+  <button class="backbtn" id="backBtn" type="button" aria-label="이전 화면" hidden>‹</button>
+  <span class="steptitle" id="stepTitle">타로 친구</span>
+</header>
+<div class="progress" id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-label="진행 상황" hidden><span id="barFill"></span></div>
+
+<main class="stage" id="stage">
+  <!-- 0 시작 -->
+  <section class="screen" data-screen="0">
+    <div class="top">
+      <h1>고민을 말하고,<br>번호를 고르면 끝</h1>
+      <p class="lead">30초면 고민을 한 줄로 정리해 드릴게요.</p>
+      <p class="lead">카드 78장을 섞어 둘게요. 몇 번만 눌러 주세요.</p>
+    </div>
+    <div class="bottom">
+      <button class="cta" id="startBtn" type="button">시작하기 <span aria-hidden="true">›</span></button>
+      <p class="note" id="usageNote"></p>
+      <details class="how">
+        <summary>어떤 방식으로 읽나요?</summary>
+        <p>라이더-웨이트 타로 78장을 읽을 때마다 새로 섞어요. 고른 번호는 섞인 줄의 자리 번호이고, 카드는 서버가 정해요. 카드는 바르게 선 방향으로만 읽고, 세 장은 지금 상황 · 걸림돌 · 이번 주 한 걸음이에요. 미래나 상대의 마음을 알려 주지 않는 생각 정리용 해석이에요.</p>
+      </details>
+      <p class="legal-note">고른 내용과 적은 글은 답변을 만들기 위해 AI 서버로 보내져요. 이 사이트에는 저장하지 않아요. 이름·전화번호 같은 개인정보는 적지 마세요.</p>
+      <p class="legal-links"><a href="privacy.html">개인정보 처리방침</a> · <a href="terms.html">이용약관</a></p>
+    </div>
+  </section>
+
+  <!-- 1 고민 종류 -->
+  <section class="screen" data-screen="1" hidden>
+    <div class="top"><h1>어떤 고민이<br>마음에 걸리나요?</h1></div>
+    <div class="bottom"><div class="choices" id="catHost" role="radiogroup" aria-label="고민 종류"></div></div>
+  </section>
+
+  <!-- 2 한 줄로 더 -->
+  <section class="screen" data-screen="2" hidden>
+    <div class="top"><h1>고민을<br>말해주세요</h1><p class="lead">적으면 해석이 내 이야기에 더 가까워져요. 건너뛰어도 돼요.</p></div>
+    <div class="bottom">
+      <form id="detailForm" autocomplete="off">
+        <label for="detail" class="sr">고민 한 줄</label>
+        <textarea id="detail" maxlength="150" rows="3" placeholder="예) 요즘 사람에 치여서 너무 힘들어요" enterkeyhint="next"></textarea>
+        <div class="count"><span id="detailCount">0</span> / 150</div>
+        <button class="cta" type="submit">다음 <span aria-hidden="true">›</span></button>
+        <button class="plain" id="skipDetail" type="button">건너뛰기</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 3 번호 (카드는 3장) -->
+  <section class="screen" data-screen="3" hidden>
+    <div class="top"><h1 id="pickTitle">카드를<br>골라 주세요</h1><p class="lead" id="pickLead"></p></div>
+    <div class="bottom">
+      <ol id="slotsHost" class="slots" aria-label="고른 번호"></ol>
+      <p class="pickstatus" id="pickStatus"></p>
+      <div id="gridHost" class="grid" role="group" aria-label="1부터 78까지 번호"></div>
+      <button class="cta" id="confirmPick" type="button" disabled>이 번호로 볼게요</button>
+      <button class="plain" id="clearPick" type="button">다시 고르기</button>
+    </div>
+  </section>
+
+  <!-- 4 확인 -->
+  <section class="screen" data-screen="4" hidden>
+    <div class="top"><h1>모두 제대로<br>골랐습니까?</h1></div>
+    <div class="bottom">
+      <dl class="summary" id="summary"></dl>
+      <button class="cta" id="yesBtn" type="button">네, 맞습니다.</button>
+      <button class="plain boxed" id="editBtn" type="button">답변 수정하기</button>
+    </div>
+  </section>
+
+  <!-- 5 결과 -->
+  <section class="screen result" data-screen="5" hidden>
+    <div class="top"><h1 id="resultTitle" class="sr">카드를 읽는 중이에요</h1></div>
+    <div class="bottom">
+      <div id="pickedHost" aria-live="polite"></div>
+      <div id="reading" class="reading" aria-live="polite"></div>
+      <div class="afterrow saverow" id="afterRow" hidden>
+        <button class="plain boxed" id="shareBtn" type="button" hidden>공유하기</button>
+        <button class="plain boxed" id="saveBtn" type="button">고른 카드 사진으로 저장</button>
+      </div>
+      <section class="deepchoice" id="deepChoice" aria-labelledby="deepTitle" hidden>
+        <h2 class="deeptitle" id="deepTitle">더 깊이 이야기하고 싶다면</h2>
+        <button class="plain boxed deepcard" id="aiDeepBtn" type="button">
+          <b>AI 카운슬러와 깊이 대화하기</b>
+          <span>이 카드와 고민을 바탕으로 이어서 물어볼 수 있어요.</span>
+        </button>
+        <button class="plain boxed deepcard" id="expertBtn" type="button">
+          <b>전문가와 1:1 심층 상담 신청하기</b>
+          <span>혼자 해결하기 어려운 깊은 고민, 전문가가 직접 답해 드립니다.</span>
+        </button>
+      </section>
+      <dialog class="sheet" id="expertDialog" aria-labelledby="expertTitle">
+        <h2 id="expertTitle">전문가 상담은 준비 중이에요</h2>
+        <p>상담사 연결과 예약은 아직 열리지 않았어요. 준비되면 이곳에서 먼저 알려 드릴게요. 지금은 AI 카운슬러와 먼저 이야기해 보실 수 있어요.</p>
+        <button class="cta small" id="expertClose" type="button">알겠어요</button>
+      </dialog>
+      <div id="followAnswers"></div>
+      <form id="followForm" class="followform" autocomplete="off" hidden>
+        <label for="follow" class="sr">더 궁금한 점</label>
+        <input id="follow" type="text" maxlength="300" placeholder="더 궁금한 점이 있나요?" enterkeyhint="send">
+        <button class="cta small" type="submit">보내기</button>
+        <p class="note" id="followNote"></p>
+      </form>
+      <div class="againrow" id="againRow" hidden>
+        <button class="plain boxed" id="againBtn" type="button">처음으로</button>
+      </div>
+      <p class="note">카드 그림: 라이더-웨이트-스미스 덱(1909, 퍼블릭 도메인). 그림 Pamela Colman Smith.</p>
+      <p class="note disclaimer">타로는 재미와 자기 성찰을 위한 상징 해석이에요. 미래나 상대의 마음을 알려 주지 않아요. 돈·건강·법률·안전이 걸린 일은 카드로 정하지 말고 전문가나 공식 상담 창구와 먼저 이야기해 보세요.</p>
+    </div>
+  </section>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="core.js"></script>
+<script src="common.js"></script>
+<script src="step.js"></script>
+</body>
+</html>
